@@ -27,11 +27,9 @@ package asuper.maathis.maathai;
  {
  LayoutInflater inflater = context.getLayoutInflater();
  View rowView= inflater.inflate(R.layout.list_single, null, true);
- TextView txtTitle = (TextView) rowView.findViewById(R.id.txtadmin);
-
- ImageView imageView = (ImageView) rowView.findViewById(R.id.imgadmin);
+ TextView txtTitle = (TextView) rowView.findViewById(R.id.name);
+ ImageView imageView = (ImageView) rowView.findViewById(R.id.imageView2);
  txtTitle.setText(web[position]);
-
  imageView.setImageResource(imageId[position]);
  return rowView;
  }

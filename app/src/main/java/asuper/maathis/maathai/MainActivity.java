@@ -1,5 +1,6 @@
 package asuper.maathis.maathai;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,10 +13,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
+ListView listView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +44,61 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+listView=(ListView)findViewById(R.id.listview);
+        ListView list;
+        String[] web = {
+                "Grocery","Utensils","Furniture","Foods"
+
+
+        } ;
+        Integer[] imageId = {
+               R.drawable.grocery,
+                R.drawable.utensils,
+                R.drawable.furniture2,
+                R.drawable.bread
+
+        };
+        CustomList adapter= new CustomList(MainActivity.this,web,imageId);
+        list=(ListView)findViewById(R.id.listview);
+        list.setAdapter(adapter);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+
+
+
+                if (position == 0) {
+Intent intent = new Intent(MainActivity.this, Grocery.class);
+                    intent.putExtra("category", "grocery");
+                    startActivity(intent);
+                    Toast.makeText(MainActivity.this, "GROCERY", Toast.LENGTH_SHORT).show();
+         }
+
+                else if (position == 1) {
+                    Intent intent = new Intent(MainActivity.this, Grocery.class);
+                    intent.putExtra("category", "utensils");
+                    Toast.makeText(MainActivity.this, "UTENSILS", Toast.LENGTH_SHORT).show();
+                }
+                else if (position == 2) {
+                    Intent intent = new Intent(MainActivity.this, Grocery.class);
+                    intent.putExtra("category", "furniture");
+                    startActivity(intent);
+                }
+
+                else if (position == 3) {
+                    Intent intent = new Intent(MainActivity.this, Grocery.class);
+                    intent.putExtra("category", "foods");
+                    startActivity(intent);
+                    Toast.makeText(MainActivity.this, "FOOD", Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+        });
     }
 
     @Override

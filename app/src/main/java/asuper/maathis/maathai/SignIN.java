@@ -37,7 +37,7 @@ public class SignIN extends AppCompatActivity {
     private static final int REQUEST_SIGNUP = 0;
     SharedPreferences sharedpreferences;
 
-    String login_url;
+    String login_url="http://192.168.43.184/maathai/login.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +55,8 @@ public class SignIN extends AppCompatActivity {
         _signupLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent= new Intent(SignIN.this, SignupActivity.class);
+                startActivity(intent);
             }
         });
         String email= sharedpreferences.getString("email", "null");
