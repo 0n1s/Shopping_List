@@ -58,6 +58,7 @@ public class Grocery extends AppCompatActivity {
     String beibei;
     String dater;
     String uID;
+    String finalStringsl;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -102,18 +103,20 @@ public class Grocery extends AppCompatActivity {
         Date datee= new Date();
         dater=dateFormat.format(datee);
 
-        String finalStringsl= sharedpreferences.getString("sl", "null");
+         finalStringsl= sharedpreferences.getString("sl", "null");
         beibei=sharedpreferences.getString("bei","null");
 
-       // finalString=finalStringsl;
+
 
         if(finalStringsl.isEmpty())
         {
             Toast.makeText(Grocery.this, "Shopping list is empty", Toast.LENGTH_SHORT).show();
+            finalString="";
         }
         else
         {
-            Toast.makeText(this, finalStringsl, Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, finalStringsl, Toast.LENGTH_SHORT).show();
+            finalString=finalStringsl;
         }
         activity=sharedpreferences.getString("activity","null");
 
@@ -155,6 +158,7 @@ public class Grocery extends AppCompatActivity {
 //                        {
                         if (activity != what) {
 
+
                             if (finalStringsl.isEmpty()) {
 
                                 stringBuilder.setLength(0);
@@ -171,8 +175,8 @@ public class Grocery extends AppCompatActivity {
                                 finalStringsl=finalString;
 
                             } else {
-
-
+                                bei=0;
+                                stringBuilder.setLength(0);
                                 stringBuilder.append(finalStringsl);
                                 stringBuilder.append(itemid + "\t" + price + "\n");
                                 finalString = stringBuilder.toString();
@@ -196,7 +200,6 @@ public class Grocery extends AppCompatActivity {
                                 stringBuilder.setLength(0);
 
                                 stringBuilder.append(itemid + "\t" + price + "\n");
-
                                 finalString = stringBuilder.toString();
                                 bei = bei + Integer.parseInt(price);
 
@@ -217,6 +220,7 @@ public class Grocery extends AppCompatActivity {
                                 editor.putString("sl", finalString);
                                 editor.putString("activity", what);
                                 editor.commit();
+                                finalStringsl=finalString;
                             }
 
 
@@ -267,7 +271,8 @@ public class Grocery extends AppCompatActivity {
                 saveshoppinglisttodb(finalString,Integer.toString(bei));
                 finalString = "";
                 stringBuilder.setLength(0);
-                Toast.makeText(Grocery.this,"Shopping list deleted", Toast.LENGTH_SHORT).show();
+                bei=0;
+             //   Toast.makeText(Grocery.this,"Shopping list deleted", Toast.LENGTH_SHORT).show();
                 SharedPreferences.Editor editor = sharedpreferences.edit();
                 editor.putString("sl", finalString);
                 editor.commit();
@@ -319,7 +324,7 @@ public class Grocery extends AppCompatActivity {
                 super.onPostExecute(s);
                 pDialog.dismiss();
                 showthem(s);
-                Toast.makeText(Grocery.this, s, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(Grocery.this, s, Toast.LENGTH_SHORT).show();
 
             }
 

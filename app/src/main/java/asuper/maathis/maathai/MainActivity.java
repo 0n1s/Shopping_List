@@ -34,7 +34,7 @@ ListView listView;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Select Item category, to start adding items to the shopping list", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -82,14 +82,15 @@ Intent intent = new Intent(MainActivity.this, Grocery.class);
                     intent.putExtra("category", "grocery");
                     intent.putExtra("uDI",uID);
                     startActivity(intent);
-                    Toast.makeText(MainActivity.this, "GROCERY", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, "GROCERY", Toast.LENGTH_SHORT).show();
          }
 
                 else if (position == 1) {
                     Intent intent = new Intent(MainActivity.this, Grocery.class);
                     intent.putExtra("category", "utensils");
                     intent.putExtra("uDI",uID);
-                    Toast.makeText(MainActivity.this, "UTENSILS", Toast.LENGTH_SHORT).show();
+                    startActivity(intent);
+                   // Toast.makeText(MainActivity.this, "UTENSILS", Toast.LENGTH_SHORT).show();
                 }
                 else if (position == 2) {
                     Intent intent = new Intent(MainActivity.this, Grocery.class);
@@ -103,14 +104,14 @@ Intent intent = new Intent(MainActivity.this, Grocery.class);
                     intent.putExtra("category", "foods");
                     intent.putExtra("uDI",uID);
                     startActivity(intent);
-                    Toast.makeText(MainActivity.this, "FOOD", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(MainActivity.this, "FOOD", Toast.LENGTH_SHORT).show();
                 }
                 else if (position == 4) {
                     Intent intent = new Intent(MainActivity.this, Grocery.class);
                     intent.putExtra("category", "electronics");
                     intent.putExtra("uDI",uID);
                     startActivity(intent);
-                    Toast.makeText(MainActivity.this, "electronics", Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(MainActivity.this, "electronics", Toast.LENGTH_SHORT).show();
                 }
 
 

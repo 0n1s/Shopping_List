@@ -30,6 +30,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class Utensils extends AppCompatActivity {
 ListView listView;
     String getter="http://192.168.43.184/maathai/item_fetcher2.php";
+    String getter2="http://192.168.43.184/maathai/item_fetcher22.php";
     String content;
     String price;
     String uID;
@@ -53,14 +54,7 @@ ListView listView;
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
 
         listView=(ListView)findViewById(R.id.listview);
         listView.setOnItemClickListener(new android.widget.AdapterView.OnItemClickListener() {
@@ -68,16 +62,13 @@ ListView listView;
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
 
-                String[] arr = {content,"Total Price \t"+price};
-                AlertDialog.Builder build = new AlertDialog.Builder(Utensils.this);
-                build.setTitle("SHOPPING LIST CONTENTS\nITEM\t\t\t\tPRICE");
-                build.setItems(arr, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //Toast.makeText(Grocery.this, which, Toast.LENGTH_SHORT).show();
-                    }
-                });
-                build.show();
+                HashMap<String,String> map =(HashMap)parent.getItemAtPosition(position);
+                final  String itemid =   map.get("id");
+                getJSON2(itemid);
+
+
+
+
 
 
             }});
@@ -116,7 +107,7 @@ ListView listView;
                 super.onPostExecute(s);
                 pDialog.dismiss();
                 showthem(s);
-                Toast.makeText(Utensils.this, s, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(Utensils.this, s, Toast.LENGTH_SHORT).show();
 
             }
 
@@ -127,6 +118,46 @@ ListView listView;
     }
 
 
+    public void getJSON2( final String trxid)
+    {
+        class GetJSON extends AsyncTask<Void, Void, String> {
+
+            SweetAlertDialog pDialog = new SweetAlertDialog(Utensils.this, SweetAlertDialog.PROGRESS_TYPE);
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                pDialog.setTitleText("Loading items");
+                pDialog.setCancelable(false);
+                pDialog.show();
+            }
+            @Override
+            protected String doInBackground(Void... params) {
+                RequestHandler rh = new RequestHandler();
+                HashMap<String, String> employees = new HashMap<>();
+                employees.put("owner_id", uID);
+                employees.put("trxid",trxid );
+
+                String res=rh.sendPostRequest(getter2,employees);
+
+                return res;
+
+            }
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                pDialog.dismiss();
+                showthem2(s);
+
+
+            }
+
+
+        }
+        GetJSON jj =new GetJSON();
+        jj.execute();
+    }
 
     private void showthem(String s) {
 
@@ -168,14 +199,16 @@ ListView listView;
 
             }
 
-            if(!succes.equals("1"))
-            {
-                new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
-                        .setContentText("You have not registered any Shopping list yet")
-                        .setTitleText("Whooops!")
-                        .show();
-            }
-
+//            String[] arr = {content,"Total Price \t"+price};
+//            AlertDialog.Builder build = new AlertDialog.Builder(Utensils.this);
+//            build.setTitle("SHOPPING LIST CONTENTS\nITEM\t\t\t\tPRICE");
+//            build.setItems(arr, new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    //Toast.makeText(Grocery.this, which, Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//            build.show();
 
 
 
@@ -189,9 +222,75 @@ ListView listView;
 
         }
 
-            ListAdapter adapter = new SimpleAdapter(Utensils.this, list, R.layout.shoppinglists,
-                    new String[]{"date", "price","id"}, new int[]{R.id.date, R.id.price,R.id.id});
-            listView.setAdapter(adapter);
+        ListAdapter adapter = new SimpleAdapter(Utensils.this, list, R.layout.shoppinglists,
+                new String[]{"date", "price","id"}, new int[]{R.id.date, R.id.price,R.id.id});
+        listView.setAdapter(adapter);
+    }
+
+    private void showthem2(String s) {
+
+        JSONObject jsonObject = null;
+        ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+        try {
+            jsonObject = new JSONObject(s);
+            JSONArray result = jsonObject.getJSONArray("result");
+
+            String itemID="";
+            String succes="0";
+            for (int i = 0; i < result.length(); i++)
+            {  JSONObject jo = result.getJSONObject(i);
+
+
+                succes=jo.getString("success");
+                if (succes.equals("1"))
+                {
+                    String dateexe=jo.getString("date");
+                    content=jo.getString("content");
+                    price=jo.getString("price");
+                    String trxID=jo.getString("trxID");
+
+                    HashMap<String, String> employees = new HashMap<>();
+                    employees.put("date", dateexe);
+                    employees.put("price", price);
+                    employees.put("id", trxID);
+                    list.add(employees);
+                }
+                else
+                {
+
+                }
+
+
+
+
+
+            }
+
+            String[] arr = {content,"Total Price \t"+price};
+            AlertDialog.Builder build = new AlertDialog.Builder(Utensils.this);
+            build.setTitle("SHOPPING LIST CONTENTS\nITEM\t\t\t\tPRICE");
+            build.setItems(arr, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //Toast.makeText(Grocery.this, which, Toast.LENGTH_SHORT).show();
+                }
+            });
+            build.show();
+
+
+
+
+        } catch (JSONException e) {
+
+            new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+                    .setTitleText("Oops...")
+                    .setContentText(e.toString())
+                    .show();
+
+        }
+
+
         }
 
 }
