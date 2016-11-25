@@ -1,6 +1,7 @@
 package asuper.maathis.maathai;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 ListView listView;
+    String uID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +30,7 @@ ListView listView;
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -45,19 +48,22 @@ ListView listView;
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
+        Intent intent=getIntent();
+        uID=intent.getStringExtra("email");
+        Toast.makeText(this, "Welcome "+uID, Toast.LENGTH_SHORT).show();
 listView=(ListView)findViewById(R.id.listview);
         ListView list;
         String[] web = {
-                "Grocery","Utensils","Furniture","Foods"
+                "Grocery","Utensils","Furniture","Foods","Electronics"
 
 
         } ;
         Integer[] imageId = {
-               R.drawable.grocery,
-                R.drawable.utensils,
-                R.drawable.furniture2,
-                R.drawable.bread
+                R.drawable.flower1,
+                R.drawable.glass,
+                R.drawable.furniturefinal,
+                R.drawable.foodfinal,
+                R.drawable.eeefinal
 
         };
         CustomList adapter= new CustomList(MainActivity.this,web,imageId);
@@ -74,6 +80,7 @@ listView=(ListView)findViewById(R.id.listview);
                 if (position == 0) {
 Intent intent = new Intent(MainActivity.this, Grocery.class);
                     intent.putExtra("category", "grocery");
+                    intent.putExtra("uDI",uID);
                     startActivity(intent);
                     Toast.makeText(MainActivity.this, "GROCERY", Toast.LENGTH_SHORT).show();
          }
@@ -81,24 +88,38 @@ Intent intent = new Intent(MainActivity.this, Grocery.class);
                 else if (position == 1) {
                     Intent intent = new Intent(MainActivity.this, Grocery.class);
                     intent.putExtra("category", "utensils");
+                    intent.putExtra("uDI",uID);
                     Toast.makeText(MainActivity.this, "UTENSILS", Toast.LENGTH_SHORT).show();
                 }
                 else if (position == 2) {
                     Intent intent = new Intent(MainActivity.this, Grocery.class);
                     intent.putExtra("category", "furniture");
+                    intent.putExtra("uDI",uID);
                     startActivity(intent);
                 }
 
                 else if (position == 3) {
                     Intent intent = new Intent(MainActivity.this, Grocery.class);
                     intent.putExtra("category", "foods");
+                    intent.putExtra("uDI",uID);
                     startActivity(intent);
                     Toast.makeText(MainActivity.this, "FOOD", Toast.LENGTH_SHORT).show();
+                }
+                else if (position == 4) {
+                    Intent intent = new Intent(MainActivity.this, Grocery.class);
+                    intent.putExtra("category", "electronics");
+                    intent.putExtra("uDI",uID);
+                    startActivity(intent);
+                    Toast.makeText(MainActivity.this, "electronics", Toast.LENGTH_SHORT).show();
                 }
 
 
             }
         });
+
+
+
+
     }
 
     @Override
@@ -140,16 +161,12 @@ Intent intent = new Intent(MainActivity.this, Grocery.class);
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+            Intent intent = new Intent(MainActivity.this,Utensils.class);
+            intent.putExtra("uID",uID);
+            startActivity(intent);
+        }
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        else if (id == R.id.nav_send) {
 
         }
 

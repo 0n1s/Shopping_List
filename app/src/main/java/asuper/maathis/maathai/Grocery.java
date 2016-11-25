@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -25,7 +27,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,12 +42,31 @@ public class Grocery extends AppCompatActivity {
 
     Button button;
     String fetcher="http://192.168.43.184/maathai/item_fetcher.php";
+    String saver="http://192.168.43.184/maathai/saver.php";
     ListView listView;
     public static final String MyPREFERENCES = "MyPrefs";
-    String what;
+    String what="";
     List<String> myList = new ArrayList<String>();
     List<String> fetcherlist = new ArrayList<String>();
     SharedPreferences sharedpreferences;
+    HashMap<String, String> shoppinglist = new HashMap<>();
+    String shopping;
+    StringBuilder stringBuilder = new StringBuilder();
+    int bei;
+    String finalString;
+    String activity;
+    String beibei;
+    String dater;
+    String uID;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +74,18 @@ public class Grocery extends AppCompatActivity {
         setContentView(R.layout.activity_grocery);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
         //button=(Button)findViewById(R.id.button);
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         listView=(ListView)findViewById(R.id.listview);
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,20 +94,31 @@ public class Grocery extends AppCompatActivity {
         });
         Intent intent =getIntent();
         what=intent.getStringExtra("category");
+        uID=intent.getStringExtra("uDI");
+
         getJSON();
 
-        String email= sharedpreferences.getString("what", "null");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        Date datee= new Date();
+        dater=dateFormat.format(datee);
 
+        String finalStringsl= sharedpreferences.getString("sl", "null");
+        beibei=sharedpreferences.getString("bei","null");
 
-        if(email.isEmpty())
+       // finalString=finalStringsl;
+
+        if(finalStringsl.isEmpty())
         {
-            SharedPreferences.Editor editor = sharedpreferences.edit();
-            editor.putString("what", what);
-            editor.commit();
+            Toast.makeText(Grocery.this, "Shopping list is empty", Toast.LENGTH_SHORT).show();
         }
-        Toast.makeText(this, "Activity name:="+email, Toast.LENGTH_SHORT).show();
+        else
+        {
+            Toast.makeText(this, finalStringsl, Toast.LENGTH_SHORT).show();
+        }
+        activity=sharedpreferences.getString("activity","null");
 
-        final SharedPreferences.Editor editor3 = sp.edit();
+
+
 
         listView.setOnItemClickListener(new android.widget.AdapterView.OnItemClickListener() {
             @Override
@@ -95,54 +137,92 @@ public class Grocery extends AppCompatActivity {
 
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(Grocery.this, "Saved", Toast.LENGTH_SHORT).show();
-                        myList.add(itemid+"\t"+price);
-                        editor3.putInt("Status_size", myList.size());
 
-                        String email= sharedpreferences.getString("what", "null");
-
-
-//                        if(!email.equals(what))
+                        String finalStringsl = sharedpreferences.getString("sl", "null");
+//                        if(finalStringsl.isEmpty())
 //                        {
-//                             Toast.makeText(Grocery.this, "We Have moved to a new activity", Toast.LENGTH_SHORT).show();
-//                            for (i = 0; i < myList.size(); i++) {
-//                                editor3.remove("Status_" + i);
-//                                editor3.putString("Status_" + i, myList.get(i));
-//
-//                            }
-//                            editor3.commit();
-//                            Toast.makeText(Grocery.this, "We do not delete existing elements", Toast.LENGTH_SHORT).show();
-//                        }else if (email.equals(what))
-//                        {
-//                            Toast.makeText(Grocery.this, "We are in the same activity", Toast.LENGTH_SHORT).show();
-//                            for (i = 0; i < myList.size(); i++)
-//                            {
-//                               // editor3.remove("Status_" + i);
-//                                editor3.putString("Status_" + i, myList.get(i));
-//                                //  Toast.makeText(Grocery.this, "Has some contents", Toast.LENGTH_SHORT).show();
-//                            }
-//                            editor3.commit();
+//                            bei =0;
+//                            stringBuilder.append(itemid+"\t"+price+"\n");
+//                            finalString = stringBuilder.toString();
+//                            bei=bei+Integer.parseInt(price);
+//                            Toast.makeText(Grocery.this,itemid +" Added to the shopping list", Toast.LENGTH_SHORT).show();
+//                            SharedPreferences.Editor editor = sharedpreferences.edit();
+//                            editor.putString("sl", finalString);
+//                            editor.putString("bei",Integer.toString(bei));
+//                            editor.commit();
 //                        }
+//                        else
+//                        {
+                        if (activity != what) {
 
-                        if(myList.size()<1) {
-                            for (i = 0; i < myList.size(); i++) {
-                                editor3.remove("Status_" + i);
-                                editor3.putString("Status_" + i, myList.get(i));
+                            if (finalStringsl.isEmpty()) {
 
+                                stringBuilder.setLength(0);
+                                finalString="";
+                                bei = 0;
+                                stringBuilder.append(itemid + "\t" + price + "\n");
+                                finalString = stringBuilder.toString();
+                                bei = bei + Integer.parseInt(price);
+                                Toast.makeText(Grocery.this, itemid + " Added to the shopping list", Toast.LENGTH_SHORT).show();
+                                SharedPreferences.Editor editor = sharedpreferences.edit();
+                                editor.putString("sl", finalString);
+                                editor.putString("bei", Integer.toString(bei));
+                                editor.commit();
+                                finalStringsl=finalString;
+
+                            } else {
+
+
+                                stringBuilder.append(finalStringsl);
+                                stringBuilder.append(itemid + "\t" + price + "\n");
+                                finalString = stringBuilder.toString();
+                                bei=Integer.parseInt(beibei)+Integer.parseInt(price);
+                                Toast.makeText(Grocery.this, itemid + " Added to the shopping list", Toast.LENGTH_SHORT).show();
+                                SharedPreferences.Editor editor = sharedpreferences.edit();
+                                editor.putString("sl", finalString);
+                                editor.putString("bei", Integer.toString(bei));
+                                editor.commit();
+                               // bei = bei +  + Integer.parseInt(beibei);
+                                //  Toast.makeText(Grocery.this, bei, Toast.LENGTH_SHORT).show();
+                                activity = what;
                             }
-
-                        }
-
-                        else
+                        } else if (activity.equals(what))
                         {
-                            for (i = myList.size()-1; i < myList.size(); i++) {
-                                editor3.remove("Status_" + i);
-                                editor3.putString("Status_" + i, myList.get(i));
+                            if (finalStringsl.isEmpty())
+                            {
 
+                                bei = 0;
+                                finalString="";
+                                stringBuilder.setLength(0);
+
+                                stringBuilder.append(itemid + "\t" + price + "\n");
+
+                                finalString = stringBuilder.toString();
+                                bei = bei + Integer.parseInt(price);
+
+                                Toast.makeText(Grocery.this, itemid + " Added to the shopping list", Toast.LENGTH_SHORT).show();
+                                SharedPreferences.Editor editor = sharedpreferences.edit();
+                                editor.putString("sl", finalString);
+                                editor.putString("bei", Integer.toString(bei));
+                                editor.commit();
+                                finalStringsl=finalString;
                             }
-                            editor3.commit();
+                            else {
+
+                                stringBuilder.append(itemid + "\t" + price + "\n");
+                                bei = bei + Integer.parseInt(price);
+                                finalString = stringBuilder.toString();
+                                Toast.makeText(Grocery.this, itemid + " Added to the shopping list", Toast.LENGTH_SHORT).show();
+                                SharedPreferences.Editor editor = sharedpreferences.edit();
+                                editor.putString("sl", finalString);
+                                editor.putString("activity", what);
+                                editor.commit();
+                            }
+
 
                         }
+
+                        //}
 
 
                     }
@@ -150,7 +230,7 @@ public class Grocery extends AppCompatActivity {
                 build.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(Grocery.this, "Canceled", Toast.LENGTH_SHORT).show();
+
                     }
                 });
                 build.show();
@@ -163,128 +243,48 @@ public class Grocery extends AppCompatActivity {
 
 
 
-
-
-//        Set<String> set = myScores.getStringSet("key", null);
-//
-//        //Set the values
-//        Set<String> set = new HashSet<String>();
-//        set.addAll(myList);
-//        scoreEditor.putStringSet("key", set);
-//        scoreEditor.commit();
-
-
-
-
-
-
-
-
-
     }
 
     public void onclick()
 
     {
 
-        SharedPreferences mSharedPreference1 =   PreferenceManager.getDefaultSharedPreferences(this);
 
+        String[] arr = {finalString,"Total Price \t"+Integer.toString(bei)};
+        AlertDialog.Builder build = new AlertDialog.Builder(Grocery.this);
+        build.setTitle("SHOPPING LIST CONTENTS\nITEM\t\t\t\tPRICE");
+        build.setItems(arr, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
-
-        String email= sharedpreferences.getString("what", "null");
-
-
-        if(!email.equals(what))
-        {
-            Toast.makeText(this, "We Have moved to a new activity", Toast.LENGTH_SHORT).show();
-
-            SharedPreferences.Editor editor = sharedpreferences.edit();
-            editor.putString("what", what);
-            editor.commit();
-
-
-
-            int size = mSharedPreference1.getInt("Status_size", 0);
-
-            for(int i=0;i<size;i++)
-            {
-                fetcherlist.add(mSharedPreference1.getString("Status_" + i, null));
             }
+        });
+        build.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
 
-
-            String[] arr = fetcherlist.toArray(new String[fetcherlist.size()]);
-            AlertDialog.Builder build = new AlertDialog.Builder(Grocery.this);
-            build.setTitle("SHOPPING LIST CONTENTS\nITEM\t\t\t\tPRICE");
-            build.setItems(arr, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Toast.makeText(Grocery.this, which, Toast.LENGTH_SHORT).show();
-                }
-            });
-            //build.setMessage("Total Price"+300);
-            build.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-
-
-                }
-            });
-            build.setNegativeButton("DELETE", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    Toast.makeText(Grocery.this, "Shopping List Saved", Toast.LENGTH_SHORT).show();
-                }
-            });
-            build.show();
-        }
-        else
-        {
-
-            fetcherlist.clear();
-            SharedPreferences.Editor editor = sharedpreferences.edit();
-            editor.putString("what", what);
-            editor.commit();
-
-
-
-            int size = mSharedPreference1.getInt("Status_size", 0);
-
-            for(int i=0;i<size;i++)
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
             {
-                fetcherlist.add(mSharedPreference1.getString("Status_" + i, null));
+                saveshoppinglisttodb(finalString,Integer.toString(bei));
+                finalString = "";
+                stringBuilder.setLength(0);
+                Toast.makeText(Grocery.this,"Shopping list deleted", Toast.LENGTH_SHORT).show();
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString("sl", finalString);
+                editor.commit();
             }
-
-
-            String[] arr = fetcherlist.toArray(new String[fetcherlist.size()]);
-            AlertDialog.Builder build = new AlertDialog.Builder(Grocery.this);
-            build.setTitle("SHOPPING LIST CONTENTS\nITEM\t\t\t\tPRICE");
-            build.setItems(arr, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Toast.makeText(Grocery.this, which, Toast.LENGTH_SHORT).show();
-                }
-            });
-            //build.setMessage("Total Price"+300);
-            build.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-
-
-                }
-            });
-            build.setNegativeButton("DELETE", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    Toast.makeText(Grocery.this, "Shopping List Saved", Toast.LENGTH_SHORT).show();
-                }
-            });
-            build.show();
-        }
-
-
-
+        });
+        build.setNegativeButton("DELETE", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                finalString = "";
+                stringBuilder.setLength(0);
+                Toast.makeText(Grocery.this,"Shopping list deleted", Toast.LENGTH_SHORT).show();
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString("sl", finalString);
+                editor.commit();
+            }
+        });
+        build.show();
 
 
     }
@@ -319,7 +319,7 @@ public class Grocery extends AppCompatActivity {
                 super.onPostExecute(s);
                 pDialog.dismiss();
                 showthem(s);
-                //. Toast.makeText(Grocery.this, s, Toast.LENGTH_SHORT).show();
+                Toast.makeText(Grocery.this, s, Toast.LENGTH_SHORT).show();
 
             }
 
@@ -330,6 +330,87 @@ public class Grocery extends AppCompatActivity {
     }
 
 
+    public void saveshoppinglisttodb(final String contents, final String prizex)
+    {
+        class GetJSON extends AsyncTask<Void, Void, String> {
+
+            SweetAlertDialog pDialog = new SweetAlertDialog(Grocery.this, SweetAlertDialog.PROGRESS_TYPE);
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                pDialog.setTitleText("Loading items");
+                pDialog.setCancelable(false);
+                pDialog.show();
+            }
+            @Override
+            protected String doInBackground(Void... params) {
+                RequestHandler rh = new RequestHandler();
+                HashMap<String,String> parabms = new HashMap<>();
+                parabms.put("items",contents);
+                parabms.put("price",prizex);
+                parabms.put("date",dater);
+                parabms.put("trxID",String.valueOf(System.currentTimeMillis()));
+                parabms.put("uid",uID);
+                String res = rh.sendPostRequest(saver, parabms);
+                return res;
+
+            }
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                pDialog.dismiss();
+                showthem2(s);
+                // Toast.makeText(Grocery.this, s, Toast.LENGTH_SHORT).show();
+
+            }
+
+
+        }
+        GetJSON jj =new GetJSON();
+        jj.execute();
+    }
+
+    public void showthem2(String s)
+    {
+        JSONObject jsonObject = null;
+        ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+        try {
+            jsonObject = new JSONObject(s);
+            JSONArray result = jsonObject.getJSONArray("result");
+
+            String itemID="";
+            String succes="0";
+            for (int i = 0; i < result.length(); i++)
+            {  JSONObject jo = result.getJSONObject(i);
+
+                String success=jo.getString("status");
+
+                if(success.equals("0"))
+                {
+                    new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("Something went wrong")
+                            .show();
+                }
+                else{
+                    new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
+                            .setTitleText("Huuuray!")
+                            .setContentText("Shpping list saved succesifully")
+                            .show();
+                }
+
+            }
+        } catch (JSONException e) {
+
+            new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+                    .setTitleText("Oops...")
+                    .setContentText("Something went wrong")
+                    .show();
+            e.printStackTrace();
+        }}
 
     private void showthem(String s) {
 
@@ -341,6 +422,7 @@ public class Grocery extends AppCompatActivity {
             JSONArray result = jsonObject.getJSONArray("result");
 
             String itemID="";
+            String succes="0";
             for (int i = 0; i < result.length(); i++)
             {  JSONObject jo = result.getJSONObject(i);
 
@@ -364,9 +446,38 @@ public class Grocery extends AppCompatActivity {
 
         }
 
-        ListAdapter adapter = new SimpleAdapter(Grocery.this, list, R.layout.itemlayout,
-                new String[]{"name", "price"}, new int[]{R.id.name, R.id.price});
-        listView.setAdapter(adapter);
+        if(what.equals("grocery"))
+        {
+            ListAdapter adapter = new SimpleAdapter(Grocery.this, list, R.layout.itemlayout,
+                    new String[]{"name", "price"}, new int[]{R.id.name, R.id.price});
+            listView.setAdapter(adapter);
+        }
+        else if(what.equals("foods"))
+        {
+            ListAdapter adapter = new SimpleAdapter(Grocery.this, list, R.layout.foods,
+                    new String[]{"name", "price"}, new int[]{R.id.name, R.id.price});
+            listView.setAdapter(adapter);
+        }
+        else if(what.equals("furniture"))
+        {
+            ListAdapter adapter = new SimpleAdapter(Grocery.this, list, R.layout.furniture,
+                    new String[]{"name", "price"}, new int[]{R.id.name, R.id.price});
+            listView.setAdapter(adapter);
+        }
+        else if(what.equals("utensils"))
+        {
+            ListAdapter adapter = new SimpleAdapter(Grocery.this, list, R.layout.utensils,
+                    new String[]{"name", "price"}, new int[]{R.id.name, R.id.price});
+            listView.setAdapter(adapter);
+        }
+        else if(what.equals("electronics"))
+        {
+            ListAdapter adapter = new SimpleAdapter(Grocery.this, list, R.layout.electronics,
+                    new String[]{"name", "price"}, new int[]{R.id.name, R.id.price});
+            listView.setAdapter(adapter);
+        }
+
+
     }
 
 
@@ -375,12 +486,46 @@ public class Grocery extends AppCompatActivity {
 }
 
 
+/*
+
+if(!succes.equals("1"))
+{
+    new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+            .setContentText("An error occured")
+            .setTitleText("Whooops!")
+            .show();
+}
+            else
+{
+    new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
+            .setContentText("Save succeeded")
+            .setTitleText("Huuray")
+            .show();
+}
+
+
+        } catch (JSONException e) {
+
+            new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+                    .setTitleText("Oops...")
+                    .setContentText(e.toString())
+                    .show();
+
+        }
+
+ */
 
 
 
 
 
 
+/*
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putString("email", email);
+        editor.putString("password", password);
+        editor.commit();
+ */
 
 
 

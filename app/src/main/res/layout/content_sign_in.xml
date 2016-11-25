@@ -8,6 +8,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:backgroundTint="@color/RoyalBlue"
+    android:background="@color/RoyalBlue"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="asuper.maathis.maathai.SignIN"
     tools:showIn="@layout/activity_sign_in">
@@ -60,8 +62,9 @@ android:src="@android:drawable/alert_dark_frame"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-
             android:padding="12dp"
+            android:backgroundTint="@color/White"
+            android:textColor="@color/SlateBlue"
             android:text="Login"/>
 
         <Switch

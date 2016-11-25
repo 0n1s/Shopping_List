@@ -1,6 +1,7 @@
 package asuper.maathis.maathai;
 
 import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -20,6 +21,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 
 public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
@@ -27,7 +30,7 @@ public class SignupActivity extends AppCompatActivity {
 
    Button signup;
     EditText name, email, password;
-    String register="http://192.168.43.184/stepsfocharity/register.php";
+    String register="http://192.168.43.184/maathai/register.php";
 
     Button btn;
 
@@ -121,12 +124,16 @@ public class SignupActivity extends AppCompatActivity {
         class GetJSON extends AsyncTask<Void, Void, String> {
 
             ProgressDialog loading;
+            SweetAlertDialog pDialog = new SweetAlertDialog(SignupActivity.this, SweetAlertDialog.PROGRESS_TYPE);
 
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
 
-                loading = ProgressDialog.show(SignupActivity.this, "Registering patient...", null, false, false);
+                pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                pDialog.setTitleText("Registering...");
+                pDialog.setCancelable(false);
+                pDialog.show();
             }
 
             @Override
@@ -144,10 +151,9 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                loading.dismiss();
-
+                pDialog.dismiss();
                 showthem(s);
-                 //Toast.makeText(SignupActivity.this, s, Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignupActivity.this, s, Toast.LENGTH_SHORT).show();
 
             }
 
@@ -167,22 +173,24 @@ public class SignupActivity extends AppCompatActivity {
             JSONObject jss = array.getJSONObject(0);
             String succes = jss.getString("status");
             if (succes.equals("1")) {
-//                new SweetAlertDialog(this,SweetAlertDialog.SUCCESS_TYPE)
-//                        .setTitleText("Registration succesifull")
-//                        .show();
+                new SweetAlertDialog(this,SweetAlertDialog.SUCCESS_TYPE)
+                        .setTitleText("Huuuuray!!")
+                        .setContentText("Registration succesifull")
+                        .show();
 
             }
             else if (succes.equals("0"))
             {
-//                new SweetAlertDialog(this,SweetAlertDialog.ERROR_TYPE)
-//                        .setTitleText("Registration Failed")
-//                        .show();
+                new SweetAlertDialog(this,SweetAlertDialog.ERROR_TYPE)
+                        .setTitleText("Ooops!!")
+                        .setContentText("Registration Failed")
+                        .show();
             }
 
         } catch (JSONException e) {
-//            new SweetAlertDialog(this,SweetAlertDialog.ERROR_TYPE)
-//                    .setTitleText(e.toString())
-//                    .show();
+            new SweetAlertDialog(this,SweetAlertDialog.ERROR_TYPE)
+                    .setTitleText(e.toString())
+                    .show();
         }
 
     }
