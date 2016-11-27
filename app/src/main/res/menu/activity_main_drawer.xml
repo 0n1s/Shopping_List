@@ -7,6 +7,11 @@
             android:icon="@drawable/list"
             android:title=" PreviousShopping lists" />
 
+        <item
+            android:id="@+id/offers"
+            android:icon="@drawable/list"
+            android:title="Offers" />
+
     </group>
 
     <item android:title="More">
@@ -14,8 +19,8 @@
 
             <item
                 android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Exit" />
+                android:icon="@drawable/events"
+                android:title="Events" />
         </menu>
     </item>
 

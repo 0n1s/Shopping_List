@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-ListView listView;
+    ListView listView;
     String uID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +51,7 @@ ListView listView;
         Intent intent=getIntent();
         uID=intent.getStringExtra("email");
         Toast.makeText(this, "Welcome "+uID, Toast.LENGTH_SHORT).show();
-listView=(ListView)findViewById(R.id.listview);
+        listView=(ListView)findViewById(R.id.listview);
         ListView list;
         String[] web = {
                 "Grocery","Utensils","Furniture","Foods","Electronics"
@@ -78,19 +78,19 @@ listView=(ListView)findViewById(R.id.listview);
 
 
                 if (position == 0) {
-Intent intent = new Intent(MainActivity.this, Grocery.class);
+                    Intent intent = new Intent(MainActivity.this, Grocery.class);
                     intent.putExtra("category", "grocery");
                     intent.putExtra("uDI",uID);
                     startActivity(intent);
                     //Toast.makeText(MainActivity.this, "GROCERY", Toast.LENGTH_SHORT).show();
-         }
+                }
 
                 else if (position == 1) {
                     Intent intent = new Intent(MainActivity.this, Grocery.class);
                     intent.putExtra("category", "utensils");
                     intent.putExtra("uDI",uID);
                     startActivity(intent);
-                   // Toast.makeText(MainActivity.this, "UTENSILS", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(MainActivity.this, "UTENSILS", Toast.LENGTH_SHORT).show();
                 }
                 else if (position == 2) {
                     Intent intent = new Intent(MainActivity.this, Grocery.class);
@@ -104,14 +104,14 @@ Intent intent = new Intent(MainActivity.this, Grocery.class);
                     intent.putExtra("category", "foods");
                     intent.putExtra("uDI",uID);
                     startActivity(intent);
-                   // Toast.makeText(MainActivity.this, "FOOD", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(MainActivity.this, "FOOD", Toast.LENGTH_SHORT).show();
                 }
                 else if (position == 4) {
                     Intent intent = new Intent(MainActivity.this, Grocery.class);
                     intent.putExtra("category", "electronics");
                     intent.putExtra("uDI",uID);
                     startActivity(intent);
-                  //  Toast.makeText(MainActivity.this, "electronics", Toast.LENGTH_SHORT).show();
+                    //  Toast.makeText(MainActivity.this, "electronics", Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -122,6 +122,7 @@ Intent intent = new Intent(MainActivity.this, Grocery.class);
 
 
     }
+
 
     @Override
     public void onBackPressed() {
@@ -167,8 +168,16 @@ Intent intent = new Intent(MainActivity.this, Grocery.class);
             startActivity(intent);
         }
 
-        else if (id == R.id.nav_send) {
+        if (id == R.id.offers) {
+            Intent intent = new Intent(MainActivity.this, Grocery.class);
+            intent.putExtra("category", "offers");
+            intent.putExtra("uDI",uID);
+            startActivity(intent);
+        }
 
+        else if (id == R.id.nav_send) {
+            Intent intent = new Intent(MainActivity.this, Events.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

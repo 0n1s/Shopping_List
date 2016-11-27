@@ -481,6 +481,12 @@ public class Grocery extends AppCompatActivity {
                     new String[]{"name", "price"}, new int[]{R.id.name, R.id.price});
             listView.setAdapter(adapter);
         }
+        else if(what.equals("offers"))
+        {
+            ListAdapter adapter = new SimpleAdapter(Grocery.this, list, R.layout.offers,
+                    new String[]{"name", "price"}, new int[]{R.id.name, R.id.price});
+            listView.setAdapter(adapter);
+        }
 
 
     }

@@ -8,4 +8,5 @@
     <string name="title_activity_testing">Testing</string>
     <string name="title_activity_grocery">Grocery</string>
     <string name="title_activity_utensils">Utensils</string>
+    <string name="title_activity_events">Events</string>
 </resources>
